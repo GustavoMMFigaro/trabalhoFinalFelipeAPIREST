@@ -2,6 +2,7 @@ package com.VitorsosterF.exercicioPraticoAPIREST.controller;
 
 import com.VitorsosterF.exercicioPraticoAPIREST.model.Carro;
 import com.VitorsosterF.exercicioPraticoAPIREST.repository.CarroRepository;
+import com.VitorsosterF.exercicioPraticoAPIREST.service.CarroThreadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,13 +15,18 @@ public class CarroController {
     @Autowired
     private final CarroRepository carroRepository;
 
+    @Autowired
+    private CarroThreadService carroThreadService;
+
     public CarroController(CarroRepository carroRepository) {
         this.carroRepository = carroRepository;
     }
 
     @PostMapping
     public Carro criarCarro(@RequestBody Carro carro) {
-        return carroRepository.save(carro);
+        Carro carroSalvo = carroRepository.save(carro);
+        carroThreadService.processarEmBackground(carroSalvo);
+        return carroSalvo;
     }
 
     @GetMapping
